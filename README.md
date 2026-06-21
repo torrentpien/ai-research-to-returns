@@ -3,9 +3,7 @@
 Explores the relationship between AI research output (arXiv papers & citations) and stock market returns across three levels: macro (overall market), sector (tech), and subfield (LLM, CV, Robotics, etc.).
 
 ## Motivation
-AI research has exploded since 2017, then tech stocks have also boomed. 
-A natural question came out of our mind: does academic research output actually drive these stock prices, or are they just two trends coincidentally moving together? 
-This project answers that question rigorously using time-series econometrics, with careful treatment of the methodological pitfalls (spurious correlation, citation truncation bias, serial autocorrelation) that often distort findings in this kind of analysis.
+Since 2017, AI research output has grown dramatically, alongside a remarkable boom in technology stocks. This raises an important question: does academic research output actually influence tech stock prices, or are the two merely coincident trends? This project investigates that question rigorously through time-series econometric analysis, while carefully addressing common methodological pitfalls, including spurious correlation, citation truncation bias, and serial autocorrelation.
 
 ## Data
  
@@ -69,6 +67,7 @@ A three-level econometric design, each handling spurious correlation through fir
 
 #### Level 0: a trend that looks suspicious
 <img width="1500" height="750" alt="fig_L1_trend" src="https://github.com/user-attachments/assets/32fd7f76-a495-4423-bdd4-9546ebf5cedf" />
+
 At first glance the relationship looks compelling — AI papers (blue bars) and cumulative value-weighted market return (red line) both climb steadily through the decade. A naive correlation in levels would yield a strong positive coefficient. But two time-series that both trend upward will always look correlated, regardless of any actual causal link. This is the classic spurious regression problem (Granger & Newbold, 1974). The right test is whether changes in one predict changes in the other.
  
 #### Level 1 & 2 — Aggregate effects are insignificant
@@ -79,6 +78,7 @@ Once we move from levels to first-differences (i.e., monthly growth rates), the 
 ARDL regressions with Newey-West HAC errors confirm the picture: across both the value-weighted market and the tech sector, no contemporaneous or lagged coefficient on AI paper growth reaches conventional significance, and R² stays below 0.08.
 
 <img width="1200" height="600" alt="fig_L1L2_irf" src="https://github.com/user-attachments/assets/053f1246-829a-4d67-8a38-e613312a1285" />
+
 The VAR-based impulse response function shows the only mild signal in the macro analysis: a positive bump at **month 2** (~+1.8%) in both market and tech-sector returns following a one-SD shock to AI paper growth. The 95% bootstrap CI barely excludes zero at the peak and the response decays back to noise within 3–4 months. So *if* there is an effect, it is delayed by about two months and short-lived — broadly consistent with an efficient market that has already priced in research activity through earlier channels (products, earnings, news).
 
 #### Level 3 — Only semiconductors show a signal
