@@ -1,6 +1,7 @@
 # ai-research-to-returns
 
-Explores the relationship between AI research output (arXiv papers & citations) and stock market returns across three levels: macro (overall market), sector (tech), and subfield (LLM, CV, Robotics, etc.).
+Explores whether AI research output, measured through arXiv paper counts and citations, helps predict returns in AI-exposed U.S. technology stocks. The project uses monthly time-series econometric methods across three levels: a value-weighted mega-cap technology portfolio, a technology-sector benchmark, and subfield-to-firm pairwise analyses.
+
 
 ## Motivation
 Since 2017, AI research output has grown dramatically, alongside a remarkable boom in technology stocks. This raises an important question: does academic research output actually influence tech stock prices, or are the two merely coincident trends? This project investigates that question rigorously through time-series econometric analysis, while carefully addressing common methodological pitfalls, including spurious correlation, citation truncation bias, and serial autocorrelation.
@@ -34,15 +35,15 @@ Since 2017, AI research output has grown dramatically, alongside a remarkable bo
 | Neural_Networks | 4,624 | 41 |
 
 ## Method
- 
-A three-level econometric design, each handling spurious correlation through first-differencing and using HAC-robust standard errors:
- 
+
+The project uses monthly time-series econometric analysis to test whether AI research output predicts returns in AI-exposed U.S. technology stocks. To reduce spurious correlation, the analysis uses log-differenced AI paper counts and month-end log stock returns, with HAC-robust standard errors and lagged specifications.
+
 | Level | Question | Methods |
 |---|---|---|
-| **L1 Macro** | Does aggregate AI output predict the broad market? | ADF, ARDL + Newey-West HAC, Granger causality, VAR/IRF |
-| **L2 Sector** | Does AI output predict tech-sector returns? | Same as L1 on value-weighted tech portfolio |
-| **L3 Subfield** | Do specific subfields predict their matched industries? | Pairwise ARDL, Panel FE (controlling for overall AI growth), VAR/IRF per subfield |
-| **L4 Firm** |  |
+| **L1 Portfolio** | Does aggregate AI research output predict returns of a value-weighted mega-cap technology portfolio? | ADF, ARDL + Newey-West HAC, Granger causality, VAR/IRF |
+| **L2 Tech Sector Benchmark** | Do the same AI signals appear in the technology-sector portfolio specification? | ARDL + HAC, Granger causality, VAR/IRF |
+| **L3 Subfield / Firm Pairs** | Do specific AI subfields predict returns of matched technology firms? | Pairwise ARDL, Granger causality, Panel FE with total AI growth control, VAR/IRF |
+| **L4 Subfield / Firm Pairs** | | |
 
 #### Subfield-to-firm mapping (Level 3):
  
@@ -81,8 +82,8 @@ ARDL regressions with Newey-West HAC errors confirm the picture: across both the
 
 The VAR-based impulse response function shows the only mild signal in the macro analysis: a positive bump at **month 2** (~+1.8%) in both market and tech-sector returns following a one-SD shock to AI paper growth. The 95% bootstrap CI barely excludes zero at the peak and the response decays back to noise within 3–4 months. So *if* there is an effect, it is delayed by about two months and short-lived — broadly consistent with an efficient market that has already priced in research activity through earlier channels (products, earnings, news).
 
-#### Level 3 — Only semiconductors show a signal
-<img width="1500" height="750" alt="fig_L3_heatmap" src="https://github.com/user-attachments/assets/6ddbe5bc-5991-4385-b405-6df437d1d181" />
+#### Level 3 — Semiconductor-related firms show the strongest exploratory signals
+<img width="1200" height="600" alt="fig_L3_heatmap" src="https://github.com/user-attachments/assets/6ddbe5bc-5991-4385-b405-6df437d1d181" />
 
 Of 27 subfield-by-firm pairs, only two reach the conventional `p < 0.10` threshold (marked with `*`), and both involve semiconductor stocks:
  
