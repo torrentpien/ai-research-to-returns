@@ -43,7 +43,7 @@ The project uses monthly time-series econometric analysis to test whether AI res
 | **L1 Portfolio** | Does aggregate AI research output predict returns of a value-weighted mega-cap technology portfolio? | ADF, ARDL + Newey-West HAC, Granger causality, VAR/IRF |
 | **L2 Tech Sector Benchmark** | Do the same AI signals appear in the technology-sector portfolio specification? | ARDL + HAC, Granger causality, VAR/IRF |
 | **L3 Subfield / Firm Pairs** | Do specific AI subfields predict returns of matched technology firms? | Pairwise ARDL, Granger causality, Panel FE with total AI growth control, VAR/IRF |
-| **L4 Subfield / Firm Pairs** | | |
+| **L4 Own-company Research Effect** |Does a firm's own AI research output predict its own stock returns?Does a firm's own AI research output predict its own stock returns? |  Spearman correlation, company-level descriptive analysis, VAR / IRF |
 
 #### Subfield-to-firm mapping (Level 3):
  
@@ -62,7 +62,10 @@ The project uses monthly time-series econometric analysis to test whether AI res
 - **Newey-West HAC standard errors.** Monthly financial regression residuals routinely show serial autocorrelation and heteroskedasticity.
 - **Citation cutoff at 24 months.** Avoids the truncation bias where recent papers haven't accumulated citations yet.
 - **Static market-cap weights.** Without monthly share-outstanding data, value weights use approximate 2026 market-cap shares (adjustable in code).
-- **Control for overall AI growth in Level 3.** Panel FE includes total AI paper growth as a control, so subfield-specific effects are isolated from the general AI hype.
+- **Control for overall AI growth in Level 3.** Panel FE includes total AI paper growth as a control, so subfield-specific effects are isolated from the general AI hype. 
+- **Trend analysis in Level 4**, which compares the evolution of AI publication output and stock prices over time.
+- **Spearman rank correlation in Level 4**, which measures the relationship between paper counts, citations, stock returns, and stock prices.
+- **Company-level impulse-response analysis (VAR/IRF) in Level 4**, which traces the estimated dynamic response of a firm's monthly log returns to shocks in its own AI subfield publication growth.
 
 ## Results
 
@@ -96,8 +99,66 @@ Of 27 subfield-by-firm pairs, only two reach the conventional `p < 0.10` thresho
 
 The economic story is intuitive: **research activity translates into compute demand first**, so semiconductor suppliers (NVDA, AVGO) capture the effect before software / platform firms. The heatmap row for Machine_Learning is uniformly green-tinted across most tickers, suggesting a broad but mostly noisy positive tilt, while LLM_NLP — the subfield with the most public hype — shows uniformly small, insignificant effects on MSFT, GOOGL, META, etc. Computer_Vision is essentially flat for NVDA in the contemporaneous regression but leads it in the Granger sense, suggesting the effect operates through a lag rather than instantaneously.
 
+#### Level 4 — Firm-level research output and stock performance
+<img width="1200" alt="annual_papers_trend" src="https://github.com/user-attachments/assets/9f1c60da-e82c-4b54-95c4-cfbc68298d0d" />
+The annual publication trend reveals a major shift after 2021.
+
+Across most large technology firms, AI publication output increased rapidly between 2017 and 2020 before reaching a peak around 2020–2021. Alphabet, Microsoft, and Meta account for the majority of visible AI research output during this period.
+However, publication counts decline sharply beginning in 2022 despite the continued expansion of the AI industry and the emergence of generative AI. This does not necessarily imply that these firms reduced their AI R&D activity. A more plausible interpretation is that leading AI companies became less willing to disclose frontier AI work through public arXiv papers.
+
+This interpretation is supported by Movva et al. (NAACL 2024), who analyzed more than 16,000 LLM-related arXiv papers from 2018 to 2023 and found that industry accounted for a smaller share of LLM publications in 2023, largely because Google and other Big Tech companies published less. In their institution-level analysis, Google, Microsoft, Amazon, and Meta were the four institutions with the largest decreases in LLM publication share in 2023.
+
+| Company | Pre-2023 LLM arXiv paper share | 2023 share | Change |
+|---|---:|---:|---:|
+| Google | 6.7% | 3.8% | -2.9 pp |
+| Microsoft | 6.8% | 5.4% | -1.4 pp |
+| Amazon | 3.0% | 1.9% | -1.1 pp |
+| Meta | 2.9% | 1.9% | -1.0 pp |
+| Four-company total | 19.3% | 13.0% | -6.3 pp |
+
+Movva et al. suggest that this decline may reflect a deprioritization of basic research or heightened secrecy due to competition. Therefore, the post-2021 decline in visible AI papers should be interpreted not as a collapse in AI innovation, but as a shift in how major AI firms disclose their research.
+
+<img width="1200" alt="annual_heatmap" src="https://github.com/user-attachments/assets/adefbf30-6a7c-4fdf-9cab-fe07858c61eb" />
+
+The annual Spearman correlation heatmap shows substantial heterogeneity across firms.
+
+Microsoft and Apple display moderately positive correlations between AI publication activity and stock returns, whereas Alphabet exhibits consistently negative correlations. Nvidia, Meta, Amazon, Tesla, and Broadcom show mixed relationships.
+
+The absence of a consistent sign across firms suggests that AI publication output is not universally associated with market performance. Any relationship appears to be highly firm-specific.
+
+<img width="1200" alt="Microsoft_full_analysis" src="https://github.com/user-attachments/assets/2001a911-8ed2-468d-a6e0-2e0f5944c0f4" />
+
+Microsoft provides a clear case of how the relationship between visible AI research output and market valuation changed after 2021.
+
+From 2017 to 2021, Microsoft's AI publication counts and stock price moved in broadly similar directions. As Microsoft's visible AI research output increased, its stock price also rose. In this earlier period, public AI research activity and market valuation appeared to move together.
+
+After 2021, however, the relationship breaks down. Microsoft's arXiv AI paper count declines sharply beginning in 2022, while its stock price reaches new highs by 2024–2025.
+
+This divergence should not be interpreted as evidence that Microsoft reduced its actual AI research activity. Rather, it is more consistent with a shift in disclosure behavior: leading AI firms may have become less willing to publish frontier AI work openly on arXiv as competition intensified, which is consistent with previous assumption.
+
+<img width="1200" alt="irf_by_company_own_papers" src="https://github.com/user-attachments/assets/c398c645-2ece-4608-9afc-8d95fab80552" />
+
+The VAR-based impulse response function shows that even when the analysis is moved to the firm level, the signal remains short-lived.  Across most firms, the largest estimated response of monthly log returns to a shock in the firm’s own AI paper growth reaches its largest magnitude within the first one to two monthly horizons, roughly before the 2.5-month mark on the plot. This is visible for Microsoft, Meta, Nvidia, Broadcom, Google, and Amazon, where the impulse response either peaks or reaches its largest movement in the horizon.
+
+This finding is consistent with the earlier Levels 1–3 results. Research output may contain some short-run information, but equity markets appear to incorporate it quickly.
+
 ## Files
 
 **`clean_data.R`** — Data preparation. Streams the arXiv metadata snapshot, filters AI-related papers (cs.LG, cs.AI, cs.CL, cs.CV, etc.), and aggregates monthly paper counts and citation metrics for downstream analysis.
 
 **`ai_full_analysis.R`** — Main analysis. Runs the three-level study using time-series methods (VAR, IRF, Granger causality) and panel regressions to estimate how AI research activity leads or correlates with market and sector returns.
+
+**`LEVEL4/ai_8_company_analysis.R`** — Extended 8-company analysis. Runs firm-level and subfield-level tests for GOOGL, MSFT, META, NVDA, AMZN, AAPL, TSLA, and AVGO, including Spearman correlations, company case studies, VAR / IRF, and cumulative 1–12 month effects.
+
+**`LEVEL4/ai_monthly.csv`** — Monthly aggregate AI research data. Contains total AI paper counts and citation metrics used for portfolio-level and market-level analysis.
+
+**`LEVEL4/ai_monthly_subfield.csv`** — Monthly AI subfield data. Aggregates AI papers by subfield, including Machine Learning, Computer Vision, LLM/NLP, General AI, Robotics, and Neural Networks.
+
+**`LEVEL4/paper_company_panel.rds`** — Company-affiliated paper panel. Links AI papers to corporate institutions and is used to build firm-level and firm-subfield paper counts.
+
+**`LEVEL4/stock_raw.rds`** — Raw stock price data. Contains daily adjusted stock prices used to compute month-end prices and monthly log returns.
+
+**`LEVEL4/panel_annual.rds`** — Annual firm-level panel. Combines company AI paper counts, citations, stock prices, returns, and excess returns for annual trend and correlation analysis.
+
+**`LEVEL4/panel_monthly.csv`** — Monthly firm-level panel. Provides company-month paper and market variables for firm-level time-series analysis.
+
