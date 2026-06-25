@@ -12,6 +12,7 @@ Since 2017, AI research output has grown dramatically, alongside a remarkable bo
 |---|---|---|
 | **arXiv metadata** | Monthly count of papers in AI categories (`cs.LG`, `cs.AI`, `cs.CL`, `cs.CV`, `cs.NE`, `stat.ML`) and their citation counts | 2017-01 – 2026-05 |
 | **Yahoo Finance** | Daily adjusted close prices for 9 mega-cap US tech stocks (AAPL, MSFT, GOOGL, GOOG, META, NVDA, AMZN, TSLA, AVGO) | 2010 – 2026-02 |
+| **SEC EDGAR / annual reports** | Annual R&D expense for the 8 target firms, aligned to each firm’s actual fiscal reporting period | 2017 – 2025 |
 
 #### AI papers by year
  
@@ -43,7 +44,7 @@ The project uses monthly time-series econometric analysis to test whether AI res
 | **L1 Portfolio** | Does aggregate AI research output predict returns of a value-weighted mega-cap technology portfolio? | ADF, ARDL + Newey-West HAC, Granger causality, VAR/IRF |
 | **L2 Tech Sector Benchmark** | Do the same AI signals appear in the technology-sector portfolio specification? | ARDL + HAC, Granger causality, VAR/IRF |
 | **L3 Subfield / Firm Pairs** | Do specific AI subfields predict returns of matched technology firms? | Pairwise ARDL, Granger causality, Panel FE with total AI growth control, VAR/IRF |
-| **L4 Own-company Research Effect** |Does a firm's own AI research output predict its own stock returns?Does a firm's own AI research output predict its own stock returns? |  Spearman correlation, company-level descriptive analysis, VAR / IRF |
+| **L4 Own-company Research Effect** | Does a firm's own AI research output predict its own stock returns, and does the post-2021 paper decline reflect lower R&D investment? | Spearman correlation, company-level descriptive analysis, R&D-expense comparison, VAR / IRF |
 
 #### Subfield-to-firm mapping (Level 3):
  
@@ -66,6 +67,7 @@ The project uses monthly time-series econometric analysis to test whether AI res
 - **Trend analysis in Level 4**, which compares the evolution of AI publication output and stock prices over time.
 - **Spearman rank correlation in Level 4**, which measures the relationship between paper counts, citations, stock returns, and stock prices.
 - **Company-level impulse-response analysis (VAR/IRF) in Level 4**, which traces the estimated dynamic response of a firm's monthly log returns to shocks in its own AI subfield publication growth.
+- **Fiscal-period R&D alignment.** R&D expense is plotted over each firm’s actual fiscal reporting period rather than being forced into calendar years. This avoids incorrectly summing firms with different fiscal year-end dates.
 
 ## Results
 
@@ -118,21 +120,17 @@ This interpretation is supported by Movva et al. (NAACL 2024), who analyzed more
 
 Movva et al. suggest that this decline may reflect a deprioritization of basic research or heightened secrecy due to competition. Therefore, the post-2021 decline in visible AI papers should be interpreted not as a collapse in AI innovation, but as a shift in how major AI firms disclose their research.
 
+<img width="1200" alt="rd_expense_vs_ai_papers" src="https://github.com/user-attachments/assets/96ed6007-42c7-4ac7-a704-897926de559c" />
+
+The R&D expense comparison supports the interpretation mentioned above. While AI paper counts of the eight firm peak around 2020 and decline sharply after 2021, the combined R&D expense of the eight firms continues to rise throughout the same period. This suggests that the fall in arXiv AI publications should not be interpreted as a decline in actual research investment. Instead, the divergence is more consistent with a disclosure shift: major technology firms continued to spend heavily on R&D, but a smaller share of that research appeared as public arXiv papers after 2021. In other words, public AI paper counts became a weaker observable measure of these firms’ underlying AI research activity.
+
 <img width="1200" alt="annual_heatmap" src="https://github.com/user-attachments/assets/adefbf30-6a7c-4fdf-9cab-fe07858c61eb" />
 
-The annual Spearman correlation heatmap shows substantial heterogeneity across firms.
-
-Microsoft and Apple display moderately positive correlations between AI publication activity and stock returns, whereas Alphabet exhibits consistently negative correlations. Nvidia, Meta, Amazon, Tesla, and Broadcom show mixed relationships.
-
-The absence of a consistent sign across firms suggests that AI publication output is not universally associated with market performance. Any relationship appears to be highly firm-specific.
+The annual Spearman correlation heatmap shows substantial heterogeneity across firms. Microsoft and Apple display moderately positive correlations between AI publication activity and stock returns, whereas Alphabet exhibits consistently negative correlations. Nvidia, Meta, Amazon, Tesla, and Broadcom show mixed relationships. The absence of a consistent sign across firms suggests that AI publication output is not universally associated with market performance. Any relationship appears to be highly firm-specific.
 
 <img width="1200" alt="Microsoft_full_analysis" src="https://github.com/user-attachments/assets/2001a911-8ed2-468d-a6e0-2e0f5944c0f4" />
 
-Microsoft provides a clear case of how the relationship between visible AI research output and market valuation changed after 2021.
-
-From 2017 to 2021, Microsoft's AI publication counts and stock price moved in broadly similar directions. As Microsoft's visible AI research output increased, its stock price also rose. In this earlier period, public AI research activity and market valuation appeared to move together.
-
-After 2021, however, the relationship breaks down. Microsoft's arXiv AI paper count declines sharply beginning in 2022, while its stock price reaches new highs by 2024–2025.
+Microsoft provides a clear case of how the relationship between visible AI research output and market valuation changed after 2021. From 2017 to 2021, Microsoft's AI publication counts and stock price moved in broadly similar directions. As Microsoft's visible AI research output increased, its stock price also rose. In this earlier period, public AI research activity and market valuation appeared to move together. After 2021, however, the relationship breaks down. Microsoft's arXiv AI paper count declines sharply beginning in 2022, while its stock price reaches new highs by 2024–2025.
 
 This divergence should not be interpreted as evidence that Microsoft reduced its actual AI research activity. Rather, it is more consistent with a shift in disclosure behavior: leading AI firms may have become less willing to publish frontier AI work openly on arXiv as competition intensified, which is consistent with previous assumption.
 
@@ -162,3 +160,8 @@ This finding is consistent with the earlier Levels 1–3 results. Research outpu
 
 **`LEVEL4/panel_monthly.csv`** — Monthly firm-level panel. Provides company-month paper and market variables for firm-level time-series analysis.
 
+**`LEVEL4/plot_rd_expense_and_papers.R`** — R&D expense and paper counts of the eight firms comparison plot. Aligns annual R&D expense to actual fiscal reporting periods and compares it with firm-level AI paper counts.
+
+**`LEVEL4/rd_expense_annual.csv`** — Annual R&D expense data. Contains SEC-derived R&D expense records for the 8 target firms.
+
+**`LEVEL4/company_annual.rds`** — Annual company paper counts. Provides firm-year AI paper totals used in the R&D comparison plot.
