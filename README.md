@@ -1,10 +1,14 @@
-# ai-research-to-returns
+# Project Title
 
-Explores whether AI research output, measured through arXiv paper counts and citations, helps predict returns in AI-exposed U.S. technology stocks. The project uses monthly time-series econometric methods across three levels: a value-weighted mega-cap technology portfolio, a technology-sector benchmark, and subfield-to-firm pairwise analyses.
-
+From AI Research to Tech Stock Returns: Evidence from AI Paper Output and U.S. Technology Stocks
 
 ## Motivation
+
 Since 2017, AI research output has grown dramatically, alongside a remarkable boom in technology stocks. This raises an important question: does academic research output actually influence tech stock prices, or are the two merely coincident trends? This project investigates that question rigorously through time-series econometric analysis, while carefully addressing common methodological pitfalls, including spurious correlation, citation truncation bias, and serial autocorrelation.
+
+## Project Description
+
+This project explores whether AI research output, measured through arXiv paper counts and citation indicators, helps explain the relationship between AI research activity and market performance in AI-exposed U.S. technology stocks. The analysis combines arXiv metadata with Yahoo Finance monthly or yearly stock return data to examine how public AI research activity relates to market performance. Using time-series econometric methods, the project evaluates this relationship across three levels: a value-weighted mega-cap technology portfolio, a technology-sector benchmark, and subfield-to-firm pairwise analyses. This project is important because AI research has become a key signal of technological competitiveness, but its financial relevance may differ across firms, AI subfields, and market periods.
 
 ## Data
  
@@ -35,7 +39,45 @@ Since 2017, AI research output has grown dramatically, alongside a remarkable bo
 | Robotics | 11,537 | 102 |
 | Neural_Networks | 4,624 | 41 |
 
-## Method
+## Getting Started
+
+To run this project, use R or RStudio and clone or download this GitHub repository. All required scripts and processed data files are included in the repository, so users only need to place the files in the same working directory before running the analysis. The analysis uses the processed arXiv AI research datasets (`ai_monthly.csv`, `ai_monthly_subfield.csv`, `paper_company_panel.rds`), stock return data (`stock_raw.rds`, `panel_monthly.csv`, `panel_annual.rds`), and R&D expense data (`rd_expense_annual.csv`, `company_annual.rds`).If starting from the raw arXiv metadata snapshot, run `clean_data.R` first to filter AI-related papers and generate the monthly AI research datasets.
+
+Before conducting the analysis, just run the codes and install the required R packages, including `dplyr`, `tidyr`, `lubridate`, `stringr`, `ggplot2`, `readr`, `purrr`, `tseries`, `forecast`, `lmtest`, `sandwich`, `plm`, `dynlm`, `vars`, `zoo`, `scales`, and `patchwork`. After the dependencies are installed, run `ai_full_analysis.R` for the main three-level time-series analysis, `ai_8_company_analysis.R` for the firm-level analysis of major AI-exposed technology companies, and `plot_rd_expense_and_papers.R` to generate the R&D expense and AI paper count comparison plots.
+
+Users should update the `setwd()` path in each R script to match their local project folder before execution. Some scripts also assume that the required `.csv` and `.rds` files already exist in the working directory, so the processed data files should be prepared before running the main analysis scripts.
+
+## File Structure
+
+The scripts and data files are related sequentially: clean_data.R prepares the arXiv-based research datasets, ai_full_analysis.R analyzes Levels 1 to 3 of the project, the analysis scripts in the LEVEL4/ folder combine research and financial data, and the output datasets are used for firm-level, sector-level, and R&D comparison analyses.
+
+**`clean_data.R`** — Data preparation. Streams the arXiv metadata snapshot, filters AI-related papers (cs.LG, cs.AI, cs.CL, cs.CV, etc.), and aggregates monthly paper counts and citation metrics for downstream analysis.
+
+**`ai_full_analysis.R`** — Main analysis. Runs the three-level study using time-series methods, including VAR, impulse response functions, Granger causality tests, and panel regressions, to estimate how AI research activity leads or correlates with market and sector returns.
+
+**`LEVEL4/ai_8_company_analysis.R`** — Extended 8-company analysis. Runs firm-level and subfield-level tests for GOOGL, MSFT, META, NVDA, AMZN, AAPL, TSLA, and AVGO, including Spearman correlations, company case studies, VAR / IRF, and cumulative 1–12 month effects.
+
+**`LEVEL4/ai_monthly.csv`** — Monthly aggregate AI research data. Contains total AI paper counts and citation metrics used for portfolio-level and market-level analysis.
+
+**`LEVEL4/ai_monthly_subfield.csv`** — Monthly AI subfield data. Aggregates AI papers by subfield, including Machine Learning, Computer Vision, LLM/NLP, General AI, Robotics, and Neural Networks.
+
+**`LEVEL4/paper_company_panel.rds`** — Company-affiliated paper panel. Links AI papers to corporate institutions and is used to build firm-level and firm-subfield paper counts.
+
+**`LEVEL4/stock_raw.rds`** — Raw stock price data. Contains daily adjusted stock prices used to compute month-end prices and monthly log returns.
+
+**`LEVEL4/panel_annual.rds`** — Annual firm-level panel. Combines company AI paper counts, citations, stock prices, returns, and excess returns for annual trend and correlation analysis.
+
+**`LEVEL4/panel_monthly.csv`** — Monthly firm-level panel. Provides company-month paper and market variables for firm-level time-series analysis.
+
+**`LEVEL4/plot_rd_expense_and_papers.R`** — R&D expense and AI paper count comparison plot. Aligns annual R&D expense to actual fiscal reporting periods and compares it with firm-level AI paper counts for the eight target firms.
+
+**`LEVEL4/rd_expense_annual.csv`** — Annual R&D expense data. Contains SEC-derived R&D expense records for the 8 target firms.
+
+**`LEVEL4/company_annual.rds`** — Annual company paper counts. Provides firm-year AI paper totals used in the R&D comparison plot.
+
+## Analysis
+
+### Method
 
 The project uses monthly time-series econometric analysis to test whether AI research output predicts returns in AI-exposed U.S. technology stocks. To reduce spurious correlation, the analysis uses log-differenced AI paper counts and month-end log stock returns, with HAC-robust standard errors and lagged specifications.
 
@@ -68,6 +110,10 @@ The project uses monthly time-series econometric analysis to test whether AI res
 - **Spearman rank correlation in Level 4**, which measures the relationship between paper counts, citations, stock returns, and stock prices.
 - **Company-level impulse-response analysis (VAR/IRF) in Level 4**, which traces the estimated dynamic response of a firm's monthly log returns to shocks in its own AI subfield publication growth.
 - **Fiscal-period R&D alignment.** R&D expense is plotted over each firm’s actual fiscal reporting period rather than being forced into calendar years. This avoids incorrectly summing firms with different fiscal year-end dates.
+
+### Visualizations Used
+
+Our analysis uses several visualizations to connect the econometric results with the project’s research question. Time-series trend plots show the long-run movement of AI paper counts, citation indicators, stock returns, and firm-level stock prices. Scatter plots compare monthly AI paper growth with monthly returns after differencing, helping test whether the apparent relationship remains after removing shared time trends. VAR impulse-response plots show the estimated dynamic response of stock returns to shocks in AI research growth. Heatmaps summarize subfield-to-firm effects and company-level Spearman correlations. Finally, the R&D expense and AI paper count comparison plot is used to examine whether the post-2021 decline in visible AI publications reflects lower research investment or a change in public disclosure behavior.
 
 ## Results
 
@@ -140,28 +186,59 @@ The VAR-based impulse response function shows that even when the analysis is mov
 
 This finding is consistent with the earlier Levels 1–3 results. Research output may contain some short-run information, but equity markets appear to incorporate it quickly.
 
-## Files
+#### Overall Conclusion and Future Research
 
-**`clean_data.R`** — Data preparation. Streams the arXiv metadata snapshot, filters AI-related papers (cs.LG, cs.AI, cs.CL, cs.CV, etc.), and aggregates monthly paper counts and citation metrics for downstream analysis.
+The results address the project’s research question by showing that public AI research output has limited explanatory power for broad market or technology-sector returns, but may contain short-lived and firm-specific information in selected subfields. Aggregate paper growth does not reliably predict returns once shared trends are removed, while some firm-level results show clearer exploratory signals. At the firm level, the divergence between falling arXiv paper counts and rising R&D expenses suggests that the post-2021 decline in public AI paper counts should not be interpreted as a decline in AI investment, because R&D expenses continue to rise while arXiv publication output falls.
 
-**`ai_full_analysis.R`** — Main analysis. Runs the three-level study using time-series methods (VAR, IRF, Granger causality) and panel regressions to estimate how AI research activity leads or correlates with market and sector returns.
+Future research could improve the analysis by using more precise market-cap weights, separating open research from proprietary AI development, adding patent or product-release data, and extending the subfield-to-firm mapping with more granular AI categories. These extensions would help test whether AI innovation affects stock prices through public research output, private R&D investment, or commercial AI deployment.
 
-**`LEVEL4/ai_8_company_analysis.R`** — Extended 8-company analysis. Runs firm-level and subfield-level tests for GOOGL, MSFT, META, NVDA, AMZN, AAPL, TSLA, and AVGO, including Spearman correlations, company case studies, VAR / IRF, and cumulative 1–12 month effects.
+## Contributors
 
-**`LEVEL4/ai_monthly.csv`** — Monthly aggregate AI research data. Contains total AI paper counts and citation metrics used for portfolio-level and market-level analysis.
+| Contributor | Role | Responsibilities |
+|---|---|---|
+| Nai-Chia Chen | PM and writer | Responsible for data collection, data analysis, coding, and writing for Levels 1–3. | 
+| Yan-Ru Chen | PM and writer | Responsible for data collection, data analysis, coding, and writing for Levels 4. |
 
-**`LEVEL4/ai_monthly_subfield.csv`** — Monthly AI subfield data. Aggregates AI papers by subfield, including Machine Learning, Computer Vision, LLM/NLP, General AI, Robotics, and Neural Networks.
+## Acknowledgments
 
-**`LEVEL4/paper_company_panel.rds`** — Company-affiliated paper panel. Links AI papers to corporate institutions and is used to build firm-level and firm-subfield paper counts.
+We would like to thank our instructor for providing valuable feedback, methodological guidance, and suggestions for improving the research direction of this project. We also gratefully acknowledge the maintainers and providers of the datasets used in this analysis, including the arXiv metadata dataset, Yahoo Finance financial data, and SEC EDGAR / company annual report data. Their publicly available data made this project possible.
 
-**`LEVEL4/stock_raw.rds`** — Raw stock price data. Contains daily adjusted stock prices used to compute month-end prices and monthly log returns.
+## References
 
-**`LEVEL4/panel_annual.rds`** — Annual firm-level panel. Combines company AI paper counts, citations, stock prices, returns, and excess returns for annual trend and correlation analysis.
+### Data Sources
 
-**`LEVEL4/panel_monthly.csv`** — Monthly firm-level panel. Provides company-month paper and market variables for firm-level time-series analysis.
+Cornell University. (n.d.). *arXiv dataset* [Data set]. Kaggle. Retrieved June 26, 2026, from https://www.kaggle.com/datasets/Cornell-University/arxiv
 
-**`LEVEL4/plot_rd_expense_and_papers.R`** — R&D expense and paper counts of the eight firms comparison plot. Aligns annual R&D expense to actual fiscal reporting periods and compares it with firm-level AI paper counts.
+OpenAlex. (n.d.). *OpenAlex API documentation*. Retrieved June 26, 2026, from https://docs.openalex.org/
 
-**`LEVEL4/rd_expense_annual.csv`** — Annual R&D expense data. Contains SEC-derived R&D expense records for the 8 target firms.
+Priem, J., Piwowar, H., & Orr, R. (2022). *OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts*. arXiv. https://arxiv.org/abs/2205.01833
 
-**`LEVEL4/company_annual.rds`** — Annual company paper counts. Provides firm-year AI paper totals used in the R&D comparison plot.
+U.S. Securities and Exchange Commission. (n.d.). *EDGAR search tools*. Retrieved June 26, 2026, from https://www.sec.gov/search-filings
+
+Yahoo Finance. (n.d.). *Download historical data in Yahoo Finance*. Retrieved June 26, 2026, from https://help.yahoo.com/kb/SLN2311.html
+
+### Cited Literature
+
+Granger, C. W. J., & Newbold, P. (1974). Spurious regressions in econometrics. *Journal of Econometrics, 2*(2), 111–120. https://doi.org/10.1016/0304-4076(74)90034-7
+
+Movva, R., Balachandar, S., Peng, K., Agostini, G., Garg, N., & Pierson, E. (2024). Topics, authors, and institutions in large language model research: Trends from 17K arXiv papers. In K. Duh, H. Gomez, & S. Bethard (Eds.), *Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers)* (pp. 1223–1243). Association for Computational Linguistics. https://doi.org/10.18653/v1/2024.naacl-long.67
+
+### Methodological References
+
+Dickey, D. A., & Fuller, W. A. (1979). Distribution of the estimators for autoregressive time series with a unit root. *Journal of the American Statistical Association, 74*(366a), 427–431. https://doi.org/10.1080/01621459.1979.10482531 (ADF unit-root test)
+
+Granger, C. W. J. (1969). Investigating causal relations by econometric models and cross-spectral methods. *Econometrica, 37*(3), 424–438. https://doi.org/10.2307/1912791  (Granger causality)
+
+Pesaran, M. H., Shin, Y., & Smith, R. J. (2001). Bounds testing approaches to the analysis of level relationships. Journal of Applied Econometrics, 16(3), 289–326. https://www.jstor.org/stable/2678547 (ARDL specification)
+
+Newey, W. K., & West, K. D. (1987). A simple, positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix. *Econometrica, 55*(3), 703–708. https://doi.org/10.2307/1913610 (Newey–West HAC standard errors)
+
+Sims, C. A. (1980). Macroeconomics and reality. *Econometrica, 48*(1), 1–48. https://doi.org/10.2307/1912017 (VAR / impulse response analysis)
+
+Spearman, C. (1904). The proof and measurement of association between two things. *The American Journal of Psychology, 15*(1), 72–101. https://doi.org/10.2307/1412159
+
+### Tools & Software
+
+R and RStudio
+
+R packages: including dplyr, tidyr, lubridate, stringr, ggplot2, readr, purrr, tseries, forecast, lmtest, sandwich, plm, dynlm, vars, zoo, scales, patchwork
