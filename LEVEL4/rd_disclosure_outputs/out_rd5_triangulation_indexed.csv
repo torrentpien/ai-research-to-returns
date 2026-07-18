@@ -1,0 +1,35 @@
+year,v,series,index
+2017,404,"arXiv papers (OpenAlex, biased post-2021)",19.002822201317027
+2018,757,"arXiv papers (OpenAlex, biased post-2021)",35.60677328316086
+2019,1577,"arXiv papers (OpenAlex, biased post-2021)",74.17685794920038
+2020,2126,"arXiv papers (OpenAlex, biased post-2021)",100
+2021,1644,"arXiv papers (OpenAlex, biased post-2021)",77.3283160865475
+2022,331,"arXiv papers (OpenAlex, biased post-2021)",15.569143932267169
+2023,286,"arXiv papers (OpenAlex, biased post-2021)",13.452492944496708
+2024,262,"arXiv papers (OpenAlex, biased post-2021)",12.323612417685794
+2025,214,"arXiv papers (OpenAlex, biased post-2021)",10.06585136406397
+2017,79.763,"R&D expense (8 firms, $B)",57.54449502564732
+2018,93.028,"R&D expense (8 firms, $B)",67.11444257670749
+2019,119.90299999999999,"R&D expense (8 firms, $B)",86.50323567393642
+2020,138.611,"R&D expense (8 firms, $B)",100
+2021,171.41,"R&D expense (8 firms, $B)",123.66262417845627
+2022,216.82999999999998,"R&D expense (8 firms, $B)",156.43058631710326
+2023,246.85399999999998,"R&D expense (8 firms, $B)",178.09120488272936
+2024,272.365,"R&D expense (8 firms, $B)",196.4959490949492
+2025,279.398,"R&D expense (8 firms, $B)",201.5698609778445
+2017,35468,Patent filings (<=2023),99.26116646143512
+2018,31769,Patent filings (<=2023),88.90910108586141
+2019,34765,Patent filings (<=2023),97.29374230381731
+2020,35732,Patent filings (<=2023),100
+2021,30428,Patent filings (<=2023),85.15616254337849
+2022,33186,Patent filings (<=2023),92.8747341318706
+2023,28383,Patent filings (<=2023),79.43300123138923
+2017,34,Notable AI models (Epoch),64.15094339622641
+2018,39,Notable AI models (Epoch),73.58490566037736
+2019,76,Notable AI models (Epoch),143.39622641509433
+2020,53,Notable AI models (Epoch),100
+2021,97,Notable AI models (Epoch),183.0188679245283
+2022,99,Notable AI models (Epoch),186.79245283018867
+2023,109,Notable AI models (Epoch),205.66037735849056
+2024,172,Notable AI models (Epoch),324.52830188679246
+2025,133,Notable AI models (Epoch),250.9433962264151
