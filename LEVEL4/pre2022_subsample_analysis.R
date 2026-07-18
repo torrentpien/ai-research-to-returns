@@ -145,4 +145,80 @@ cat("  caveat: 事件在時間上有群聚 (尤其 GOOGL),t 檢定假設事件�
 cat("  嚴謹版應以 calendar-time portfolio 或 clustered bootstrap 重估\n\n")
 print(as.data.frame(res %>% arrange(window, desc(period))), row.names = FALSE)
 
+# ============================================================
+# (3) 延伸 lag 結構:累積 1..12 個月
+#     與 ai_8_company_analysis.R 第 9 節的差別:
+#     - 報告「全部」horizon,不挑最大值 (避免 selection bias)
+#     - x 先季節調整、y 用超額報酬、只用落後項
+# ============================================================
+cat("\n===== (3) 延伸 lag:累積 1..h 個月效果 =====\n")
+
+scan_firm <- function(tk, H = 6, yr_max = 2021) {
+  d <- pm %>% filter(ticker == tk, year <= yr_max) %>%
+    mutate(x = c(NA, diff(log(n_papers + 1))), mo = factor(month))
+  ok <- !is.na(d$x); d$x_sa <- NA_real_
+  d$x_sa[ok] <- resid(lm(x ~ mo, data = d[ok, ]))
+  for (L in 1:H) d[[paste0("x", L)]] <- lag(d$x_sa, L)
+  d <- d %>% drop_na(excess_return, all_of(paste0("x", 1:H)))
+  if (nrow(d) < 40) return(NULL)
+  f <- as.formula(paste("excess_return ~", paste0("x", 1:H, collapse = "+")))
+  m <- lm(f, data = d); V <- NeweyWest(m, lag = 6, prewhite = FALSE)
+  map_dfr(1:H, function(h) {
+    cols <- paste0("x", 1:h)
+    L <- setNames(rep(0, length(coef(m))), names(coef(m))); L[cols] <- 1
+    cum <- sum(coef(m)[cols]); se <- as.numeric(sqrt(t(L) %*% V %*% L))
+    data.frame(ticker = tk, h = h, cum = round(cum, 3),
+               p = round(2*pnorm(abs(cum/se), lower.tail = FALSE), 3))
+  })
+}
+cat("\n[3-A] 個別公司 2017-2021, 累積 lag 1..6 (全部報告):\n")
+r3a <- bind_rows(lapply(FIRMS, scan_firm))
+print(r3a %>% mutate(cell = sprintf("%+.2f(p=%.2f)", cum, p)) %>%
+        select(ticker, h, cell) %>%
+        pivot_wider(names_from = h, values_from = cell, names_prefix = "h") %>%
+        as.data.frame(), row.names = FALSE)
+
+cat("\n[3-B] Pooled panel 2017-2021, firm FE + month FE, lag 1..12:\n")
+H <- 12
+pd12 <- pm %>% filter(ticker %in% FIRMS, year <= 2021) %>%
+  group_by(ticker) %>% arrange(month_date) %>%
+  mutate(x = c(NA, diff(log(n_papers + 1))), mo = factor(month)) %>% ungroup()
+ok <- !is.na(pd12$x); pd12$x_sa <- NA_real_
+pd12$x_sa[ok] <- resid(lm(x ~ mo:ticker, data = pd12[ok, ]))
+for (L in 1:H) pd12[[paste0("x", L)]] <-
+  ave(pd12$x_sa, pd12$ticker, FUN = function(v) dplyr::lag(v, L))
+pd12 <- pd12 %>% drop_na(monthly_return, all_of(paste0("x", 1:H)))
+f12 <- as.formula(paste("monthly_return ~", paste0("x", 1:H, collapse = "+"),
+                        "+ factor(ticker) + factor(month_date)"))
+mp12 <- lm(f12, data = pd12)
+Vp12 <- vcovCL(mp12, cluster = pd12$month_date, type = "HC1")
+r3b <- map_dfr(1:H, function(h) {
+  cols <- paste0("x", 1:h)
+  L <- setNames(rep(0, length(coef(mp12))), names(coef(mp12))); L[cols] <- 1
+  cum <- sum(coef(mp12)[cols]); se <- as.numeric(sqrt(t(L) %*% Vp12 %*% L))
+  data.frame(h = h, cum = round(cum, 4), se = round(se, 4),
+             p = round(2*pnorm(abs(cum/se), lower.tail = FALSE), 3))
+})
+cat(sprintf("N=%d firm-months\n", nrow(pd12)))
+print(r3b, row.names = FALSE)
+
+# ============================================================
+# (4) 事件研究長窗口 (pre-2022): 延遲反應檢查
+#     caveat: 窗口愈長,事件窗重疊與 benchmark drift 的污染愈重
+#     (GOOGL 佔一半事件,其長期相對表現會主導長窗 CAR),
+#     長窗結果只能檢查「有沒有正的延遲反應」,不能反向解讀。
+# ============================================================
+cat("\n===== (4) 事件研究 pre-2022 長窗口 =====\n")
+ev_pre <- ev %>% filter(period == "pre2022")
+wins_long <- list(c(0,10), c(0,21), c(0,42), c(0,63))
+r4 <- map_dfr(wins_long, function(w) {
+  cc <- ev_pre %>% rowwise() %>%
+    mutate(car = car_one(ticker, edate, w[1], w[2])) %>%
+    ungroup() %>% filter(!is.na(car))
+  data.frame(window = sprintf("[0,+%dtd] ~%dmo", w[2], round(w[2]/21)),
+             n = nrow(cc), mean_car_pct = round(100*mean(cc$car), 2),
+             t = round(mean(cc$car)/(sd(cc$car)/sqrt(nrow(cc))), 2))
+})
+print(r4, row.names = FALSE)
+
 cat("\n完成。\n")
