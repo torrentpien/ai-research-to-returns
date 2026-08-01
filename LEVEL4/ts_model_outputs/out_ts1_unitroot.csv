@@ -1,0 +1,7 @@
+series,ADF_lv_p,KPSS_lv_p,ADF_d1_p,KPSS_d1_p,verdict
+log_index (<e8><82><a1><e5><83><b9>),0.247,0.01,0.01,0.1,I(1)
+log_papers (6<e5><ae><b6>),0.597,0.01,0.01,0.1,I(1)
+log_papers (<e5><85><a8>arXiv),0.374,0.01,0.01,0.1,I(1)
+log_RD,0.903,0.01,0.01,0.1,I(1)
+log_patents,0.274,0.1,0.01,0.1,<e4><b8><8d><e6><98><8e><e7><a2><ba>
+log_models,0.155,0.01,0.01,0.1,I(1)
