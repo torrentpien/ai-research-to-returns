@@ -1,0 +1,5 @@
+test,statistic,critical_5pct,conclusion
+Engle-Granger 殘差 ADF,-2.496,-4.35 (EG),無共整合
+Johansen trace (r=0),86.754,53.12,拒絕 r=0 (系統內有共整合)
+"ARDL Bounds F (PSS 2001, k=3)",1.355,3.23 [I(0)] - 4.35 [I(1)],無長期關係
+誤差修正項 ECT (y_{t-1}),-0.035,t 檢定,"t=-1.17, 不顯著"

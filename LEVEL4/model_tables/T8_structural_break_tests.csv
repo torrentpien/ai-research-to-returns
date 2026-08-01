@@ -1,0 +1,5 @@
+test,statistic,p_value,conclusion
+Chow 型 Wald (指定 2022),1.213,0.312,無顯著斷點
+Quandt-Andrews supF (未知斷點),13.117,0.3881,無顯著斷點
+supF 峰值位置,NA,NA,2022-06-01
+Bai-Perron (BIC) 斷點數,0,NA,未選出任何斷點
